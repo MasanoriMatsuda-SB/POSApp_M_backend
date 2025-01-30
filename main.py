@@ -14,7 +14,8 @@ app = FastAPI()
 origins = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://192.168.10.102:3000"
+    "http://192.168.10.102:3000",
+    "https://tech0-gen8-step4-pos-app-40.azurewebsites.net"
     # 必要に応じて他のドメインも追加
 ]
 
