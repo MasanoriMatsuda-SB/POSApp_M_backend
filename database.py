@@ -4,8 +4,8 @@ import urllib.parse
 import logging
 import sys
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 # ロギング設定
 logging.basicConfig(
@@ -46,6 +46,9 @@ DATABASE_URL = (
     f"?ssl_ca={CERT_PATH}&ssl_verify_cert=true"
 )
 
+# Base クラスを定義
+Base = declarative_base()
+
 try:
     # Engine と SessionLocal を生成（SSL設定付き）
     engine = create_engine(
@@ -58,12 +61,15 @@ try:
         }
     )
     
+    # セッションファクトリを作成
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
     # 接続テスト
     with engine.connect() as connection:
-        result = connection.execute("SELECT 1")
+        result = connection.execute(text("SELECT 1"))
         logger.info(f"接続テスト結果: {result.scalar()}")
-    
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 except Exception as e:
     logger.error(f"データベース接続エラー: {type(e)}")
     logger.error(f"エラー詳細: {e}")
+
