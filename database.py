@@ -15,7 +15,7 @@ DB_USER = os.getenv("DB_USER", "root")
 DB_PASS = os.getenv("DB_PASS", "password")
 
 # SSL証明書のパスを設定（相対パス）
-CERT_PATH = os.path.join(os.path.dirname(__file__), "certificates", "DigiCertGlobalRootCA.crt.pem")
+CERT_PATH = os.path.join(os.path.dirname(__file__), "certificates", "DigiCertGlobalRootG2.crt.pem")
 
 # DB接続URLを組み立て (pymysqlを使用)
 DATABASE_URL = (
