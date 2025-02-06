@@ -14,9 +14,26 @@ DB_NAME = os.getenv("DB_NAME", "pos_app_matsuda")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASS = os.getenv("DB_PASS", "password")
 
-# DB接続URLを組み立て (mysqlclient使用例)
-DATABASE_URL = f"mysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# SSL証明書のパスを設定（相対パス）
+CERT_PATH = os.path.join(os.path.dirname(__file__), "certificates", "DigiCertGlobalRootCA.crt.pem")
 
-# Engine と SessionLocal を生成
-engine = create_engine(DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# DB接続URLを組み立て (pymysqlを使用)
+DATABASE_URL = (
+    f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"?ssl_ca={CERT_PATH}&ssl_verify_cert=true"
+)
+
+try:
+    # Engine と SessionLocal を生成（SSL設定付き）
+    engine = create_engine(
+        DATABASE_URL,
+        echo=True,  # SQLログを出力
+        connect_args={
+            "ssl": {
+                "ssl_ca": CERT_PATH
+            }
+        }
+    )
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+except Exception as e:
+    print(f"データベース接続エラー: {e}")
